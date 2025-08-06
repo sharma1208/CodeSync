@@ -1,0 +1,100 @@
+/* Reset and base styles */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100vh; /* fill full screen height */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f172a; /* dark background */
+  color: #f1f5f9; /* light text */
+}
+
+/* Root container flex */
+#root {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar styling */
+.sidebar {
+  width: 250px;
+  background-color: #1e293b; /* darker blue/gray */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-right: 1px solid #334155;
+}
+
+/* Editor container fills remaining space */
+.editor-container {
+  flex: 1;
+  background-color: #0f172a;
+  padding: 1rem;
+  height: 100%; /* fill height */
+  display: flex;
+  flex-direction: column;
+}
+
+/* The Monaco editor container will fill all available space */
+.editor-container > div {
+  flex: 1;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.modal input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  margin-bottom: 15px;
+  background: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-buttons button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #00b894;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #555;
+  color: white;
+}
+
