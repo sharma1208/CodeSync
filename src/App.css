@@ -98,3 +98,23 @@ body, html, #root {
   color: white;
 }
 
+.editor-container.ghost-glow {
+  border-radius: 10px;
+  padding: 4px;
+  animation: rainbowGlow 3s linear infinite;
+  /* Add initial box-shadow so glow is visible */
+  box-shadow: 0 0 10px red;
+}
+
+@keyframes rainbowGlow {
+  0% { box-shadow: 0 0 10px red; }
+  25% { box-shadow: 0 0 10px orange; }
+  50% { box-shadow: 0 0 10px yellow; }
+  75% { box-shadow: 0 0 10px green; }
+  100% { box-shadow: 0 0 10px blue; }
+}
+
+.prettify-button {
+  margin-top: 10px;
+}
+

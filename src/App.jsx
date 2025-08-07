@@ -10,6 +10,8 @@ function App() {
   const [joinInput, setJoinInput] = useState("");
   const [showJoinDialog, setShowJoinDialog] = useState(false); // NEW
   const editorRef = useRef(null);
+  const [ghostMode, setGhostMode] = useState(false);
+  const [loadingPrettify, setLoadingPrettify] = useState(false);
   const isRemoteUpdate = useRef(false)
 
 /*
@@ -17,6 +19,7 @@ When the user clicks "Start New Session":
 1. Calls createSession(code) from sessionManager.js
 2. Sets the new sessionId
 3. Updates the URL to share with someone else
+
 */
 
   // ▶️ Create new session
@@ -33,7 +36,9 @@ When the user clicks "Start New Session":
     subscribeToRealtimeUpdates(id);
   };
 
-    // 🔗 Join existing session by ID
+// 🔗 Join existing session by ID. Determins session ready 
+// for pair programming once session ID inputted and then 
+// subscribes for real time updates aka syncing across tabs
     const handleJoinSession = async (id) => {
       if (!id) {
         alert("Please enter a valid session ID.");
@@ -59,7 +64,8 @@ When the user clicks "Start New Session":
       subscribeToRealtimeUpdates(id);
     };
 
-  // 🛰️ Real-time sync listener
+// 🛰️ Real-time sync listener. Only updates when something is typed into the 
+// editor to prevent loop when remotely changing from firebase. 
   const subscribeToRealtimeUpdates = (id) => {
     const unsubscribe = subscribeToSession(id, (newCode) => {
       const currentCode = editorRef.current?.getValue();
@@ -103,14 +109,46 @@ When the user clicks "Start New Session":
     
   }; 
 
+  // ✨ Prettify code with GPT
+  const handlePrettify = async () => {
+    setLoadingPrettify(true);
+    try {
+      const res = await fetch("http://localhost:4000/api/prettify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      setCode(data.prettifiedCode || code);
+      editorRef.current?.setValue(data.prettifiedCode || code);
+      updateSessionCode(sessionId, data.prettifiedCode || code);
+    } catch (error) {
+      console.error("Prettify failed:", error);
+    } finally {
+      setLoadingPrettify(false);
+    }
+  };
+
   return (
     <div id="root">
       <div className="sidebar">
         <h2>CodeSync</h2>
         <button onClick={handleStartSession}>Start New Session</button>
         <button onClick={() => setShowJoinDialog(true)}>Join Existing Session</button>
-        <button>Ghost Mode</button>
+        <button onClick={() => setGhostMode(!ghostMode)}>
+  {ghostMode ? "👻 Ghost Mode On" : "Ghost Mode"}
+</button>
         <button>Settings</button>
+
+        {ghostMode && (
+          <button
+            onClick={handlePrettify}
+            disabled={loadingPrettify}
+            style={{ marginTop: "10px", backgroundColor: "#8e44ad", color: "white" }}
+          >
+            {loadingPrettify ? "Prettifying..." : "Prettify Code"}
+          </button>
+        )}
 
         {sessionId && (
           <div style={{ marginTop: "10px" }}>
@@ -120,7 +158,7 @@ When the user clicks "Start New Session":
         )}
       </div>
 
-      <div className="editor-container">
+      <div className={`editor-container ${ghostMode ? "ghost-glow" : ""}`}>
         {!sessionReady? (
           <div className = "loading"> 
             <p>Loading session...</p>
